@@ -1,0 +1,54 @@
+@if (open()) {
+  <div class="overlay" (click)="close.emit()"></div>
+
+  <aside class="panel" (click)="$event.stopPropagation()">
+    <div class="panel-head">
+      <div class="panel-title">Work Order Details</div>
+      <button class="panel-x" type="button" (click)="close.emit()">✕</button>
+    </div>
+
+    <form class="panel-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label class="field">
+        <div class="field-label">Work Order Name</div>
+        <input class="input" formControlName="name" placeholder="Enter name" />
+        @if (form.controls['name'].touched && form.controls['name'].invalid) {
+          <div class="field-error">Required.</div>
+        }
+      </label>
+
+      <label class="field">
+        <div class="field-label">Status</div>
+        <ng-select
+          [items]="statusOptions()"
+          bindLabel="label"
+          bindValue="value"
+          [clearable]="false"
+          formControlName="status">
+        </ng-select>
+      </label>
+
+      <div class="field two">
+        <div class="col">
+          <div class="field-label">Start Date</div>
+          <ngb-datepicker formControlName="start"></ngb-datepicker>
+        </div>
+
+        <div class="col">
+          <div class="field-label">End Date</div>
+          <ngb-datepicker formControlName="end"></ngb-datepicker>
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="banner-error">{{ error() }}</div>
+      }
+
+      <div class="panel-actions">
+        <button type="button" class="btn ghost" (click)="close.emit()">Cancel</button>
+        <button type="submit" class="btn primary">
+          {{ mode() === 'create' ? 'Create' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </aside>
+}

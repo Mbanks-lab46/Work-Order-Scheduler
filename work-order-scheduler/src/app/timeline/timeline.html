@@ -1,0 +1,91 @@
+<div class="timeline-root" (click)="openMenuId.set(null)">
+
+  <app-timeline-header
+    [timescale]="timescale()"
+    (timescaleChange)="setTimescale($event)">
+  </app-timeline-header>
+
+  <div class="card">
+    <!-- HEADER -->
+    <div class="grid-header">
+      <div class="left-head">Work Center</div>
+
+      <div class="right-head" #gridHeaderScroll (scroll)="onHeaderScroll()">
+        <div class="time-header" [style.width.px]="gridWidthPx()" [style.--colw.px]="colWidth()">
+          @for (c of columns(); track c.key) {
+            <div class="time-cell" [style.width.px]="colWidth()">{{ c.label }}</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="grid-body">
+      <!-- LEFT (fixed) -->
+      <div class="left-col">
+        @for (wc of store.workCenters(); track wc.docId) {
+          <div class="wc-row" [style.height.px]="laneCount(wc.docId) * 44 + 12">
+            {{ wc.data.name }}
+          </div>
+        }
+      </div>
+
+      <!-- RIGHT (scrolls) -->
+      <div class="right-col" #gridScroll (scroll)="onBodyScroll()">
+        <div class="grid-canvas" [style.width.px]="gridWidthPx()" [style.--colw.px]="colWidth()">
+          <div class="today-line" [style.left.px]="todayX()"></div>
+
+          @for (wc of store.workCenters(); track wc.docId) {
+            <div class="grid-row"
+                 [style.height.px]="laneCount(wc.docId) * 44 + 12"
+                 (click)="onTimelineClick($event, wc.docId)">
+
+              <div class="row-bg"></div>
+
+              @for (o of ordersWithLanes(wc.docId); track o.docId) {
+                <div class="wo-bar"
+                     [style.left.px]="dateIsoToX(o.data.startDate)"
+                     [style.width.px]="widthForOrder(o.data.startDate, o.data.endDate)"
+                     [style.top.px]="o.lane * 44 + 10">
+
+                  <div class="wo-name">{{ o.data.name }}</div>
+
+                  <div class="wo-badge" [class]="statusClass(o.data.status)">
+                    {{ o.data.status === 'in-progress' ? 'In progress' : (o.data.status | titlecase) }}
+                  </div>
+
+                  <button class="wo-menu" type="button"
+                          (click)="$event.stopPropagation(); toggleMenu(o.docId)">
+                    ⋯
+                  </button>
+
+                  @if (openMenuId() === o.docId) {
+                    <div class="menu-pop" (click)="$event.stopPropagation()">
+                      <button type="button" (click)="editOrder(o)">Edit</button>
+                      <button type="button" class="danger" (click)="deleteOrder(o.docId)">Delete</button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <app-work-order-panel
+    [open]="panelOpen()"
+    [mode]="mode()"
+    [workCenterId]="activeWorkCenterId()"
+    [statusOptions]="statusOptions"
+    [editingOrder]="editingOrder()"
+    [prefillStartIso]="prefillStartIso()"
+    [prefillEndIso]="prefillEndIso()"
+    [error]="overlapError()"
+    (close)="closePanel()"
+    (submit)="handlePanelSubmit($event)">
+  </app-work-order-panel>
+
+</div>
