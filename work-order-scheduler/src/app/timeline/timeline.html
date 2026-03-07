@@ -6,7 +6,7 @@
   </app-timeline-header>
 
   <div class="card">
-    <!-- HEADER -->
+
     <div class="grid-header">
       <div class="left-head">Work Center</div>
 
@@ -19,9 +19,8 @@
       </div>
     </div>
 
-    <!-- BODY -->
     <div class="grid-body">
-      <!-- LEFT (fixed) -->
+      
       <div class="left-col">
         @for (wc of store.workCenters(); track wc.docId) {
           <div class="wc-row" [style.height.px]="laneCount(wc.docId) * 44 + 12">
@@ -30,7 +29,7 @@
         }
       </div>
 
-      <!-- RIGHT (scrolls) -->
+      
       <div class="right-col" #gridScroll (scroll)="onBodyScroll()">
         <div class="grid-canvas" [style.width.px]="gridWidthPx()" [style.--colw.px]="colWidth()">
           <div class="today-line" [style.left.px]="todayX()"></div>
@@ -45,7 +44,6 @@
               @for (o of ordersWithLanes(wc.docId); track o.docId) {
                 <div class="wo-bar"
                      [style.left.px]="dateIsoToX(o.data.startDate)"
-                     [style.width.px]="widthForOrder(o.data.startDate, o.data.endDate)"
                      [style.top.px]="o.lane * 44 + 10">
 
                   <div class="wo-name">{{ o.data.name }}</div>
@@ -74,12 +72,11 @@
     </div>
   </div>
 
-  <!-- PANEL -->
   <app-work-order-panel
     [open]="panelOpen()"
     [mode]="mode()"
     [workCenterId]="activeWorkCenterId()"
-    [statusOptions]="statusOptions"
+    [statusOptions]="statusOptions()"
     [editingOrder]="editingOrder()"
     [prefillStartIso]="prefillStartIso()"
     [prefillEndIso]="prefillEndIso()"

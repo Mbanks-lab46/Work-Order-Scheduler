@@ -1,9 +1,10 @@
-import { Component, input, output, effect } from '@angular/core';
+import { Component, input, output, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter, NgbDatepickerModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { WorkOrderDocument, WorkOrderStatus } from '../models/work-order.interface';
+import { DateFormatter } from '../date-formatter';
 
 export interface WorkOrderPanelSubmit {
   docId?: string;
@@ -30,12 +31,20 @@ function ngbFromIso(iso: string): NgbDateStruct {
   imports: [CommonModule, ReactiveFormsModule, NgbDatepickerModule, NgSelectModule],
   templateUrl: './work-order-panel.html',
   styleUrl: './work-order-panel.scss',
+  providers: [
+    { provide: NgbDateParserFormatter, useClass: DateFormatter }
+  ]
 })
 export class WorkOrderPanel {
   open = input<boolean>(false);
   mode = input<'create' | 'edit'>('create');
   workCenterId = input<string>('');
-  statusOptions = input<{ value: WorkOrderStatus; label: string }[]>([]);
+  statusOptions = input<{ value: WorkOrderStatus; label: string }[]>([
+    { value: 'open', label: 'Open' },
+    { value: 'in-progress', label: 'In Progress' },
+    { value: 'complete', label: 'Complete' },
+    { value: 'blocked', label: 'Blocked' }
+  ]);
   editingOrder = input<WorkOrderDocument | null>(null);
   prefillStartIso = input<string>('');
   prefillEndIso = input<string>('');
@@ -61,8 +70,8 @@ export class WorkOrderPanel {
         this.form.reset({
           name: order.data.name,
           status: order.data.status,
-          start: ngbFromIso(order.data.startDate),
-          end: ngbFromIso(order.data.endDate),
+          startDate: ngbFromIso(order.data.startDate),
+          endDate: ngbFromIso(order.data.endDate),
         });
         return;
       }
@@ -71,8 +80,8 @@ export class WorkOrderPanel {
         this.form.reset({
           name: '',
           status: 'open',
-          start: ngbFromIso(this.prefillStartIso()),
-          end: ngbFromIso(this.prefillEndIso()),
+          startDate: ngbFromIso(this.prefillStartIso()),
+          endDate: ngbFromIso(this.prefillEndIso()),
         });
       }
     });
@@ -88,15 +97,15 @@ export class WorkOrderPanel {
       return;
     }
 
-    const { name, status, start, end } = this.form.getRawValue();
+    const { name, status, startDate, endDate } = this.form.getRawValue();
 
     this.submit.emit({
       docId: this.mode() === 'edit' ? this.editingOrder()?.docId : undefined,
       workCenterId: this.workCenterId(),
       name,
       status,
-      startDate: isoFromNgb(start),
-      endDate: isoFromNgb(end),
+      startDate: isoFromNgb(startDate),
+      endDate: isoFromNgb(endDate),
     });
   }
 
