@@ -106,7 +106,7 @@ export class Timeline implements OnInit {
   overlapError = signal<string>('');
   openMenuId = signal<string | null>(null);
 
-  statusOptions = STATUS_OPTIONS;
+  statusOptions = signal(STATUS_OPTIONS);
 
 
   ngOnInit(): void {
