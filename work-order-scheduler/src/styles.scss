@@ -3,7 +3,11 @@
   --text: #1f2937;
 }
 
-/* Global font */
+* {
+  box-sizing: border-box;
+  cursor: url('/assets/images/Pointing.svg') 4 0, pointer;
+}
+
 body {
   font-family: "Circular-Std", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: var(--nao-bg);
@@ -15,7 +19,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* App container */
 .app-container {
   padding: 24px;
 }

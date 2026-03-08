@@ -10,12 +10,28 @@
     <div class="grid-header">
       <div class="left-head">Work Center</div>
 
-      <div class="right-head" #gridHeaderScroll (scroll)="onHeaderScroll()">
-        <div class="time-header" [style.width.px]="gridWidthPx()" [style.--colw.px]="colWidth()">
+      <div class="right-head" #gridHeaderScroll>
+        <div class="time-header"  [style.width.px]="gridWidthPx()" [style.--colw.px]="colWidth()">
           @for (c of columns(); track c.key) {
             <div class="time-cell" [style.width.px]="colWidth()">{{ c.label }}</div>
           }
         </div>
+      </div>
+    </div>
+
+    <div class="current-period-layer">
+      <div class="current-period-spacer"></div>
+
+      <div
+        class="current-period-track"
+        [style.transform]="'translateX(' + (-headerScrollLeft()) + 'px)'">
+
+        <app-current-date-tab
+          [timescale]="timescale()"
+          [columns]="columns()"
+          [colWidth]="colWidth()"
+          [gridWidthPx]="gridWidthPx()">
+        </app-current-date-tab>
       </div>
     </div>
 
@@ -36,13 +52,24 @@
 
           @for (wc of store.workCenters(); track wc.docId) {
             <div class="grid-row"
-                 [style.height.px]="laneCount(wc.docId) * 44 + 12"
-                 (click)="onTimelineClick($event, wc.docId)">
+                [style.height.px]="laneCount(wc.docId) * 44 + 12"
+                (click)="onTimelineClick($event, wc.docId)"
+                (mousemove)="onTimelineMouseMove($event, wc.docId)"
+                (mouseleave)="onTimelineMouseLeave()">
 
               <div class="row-bg"></div>
 
+              @if (showAddBubble() && hoverRowId() === wc.docId && hoverX() !== null) {
+                <div class="add-date-anchor" [style.left.px]="hoverX()! - 40">
+                  <div class="add-date-preview"></div>
+                  <div class="add-date-bubble">Click to add dates</div>
+                </div>
+              }
+
               @for (o of ordersWithLanes(wc.docId); track o.docId) {
                 <div class="wo-bar"
+                     [ngClass]="'status-' + o.data.status"
+                     [class.menu-open]="openMenuId() === o.docId"
                      [style.left.px]="dateIsoToX(o.data.startDate)"
                      [style.top.px]="o.lane * 44 + 10">
 

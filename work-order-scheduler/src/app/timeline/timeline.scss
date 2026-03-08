@@ -29,13 +29,13 @@
 
 .card {
   border: 1px solid #eef0f4;
-  border-radius: 14px;
   background: #fff;
   overflow: hidden;
 }
 
 .grid-header {
   display: grid;
+  height: 32px;
   grid-template-columns: 280px 1fr;
   border-bottom: 1px solid #eef0f4;
 }
@@ -46,7 +46,9 @@
   color: #6b7280;
 }
 
+
 .right-head {
+  position: relative;
   overflow: hidden;
   border-left: 1px solid #eef0f4;
 
@@ -95,27 +97,68 @@
 
 .grid-canvas {
   position: relative;
-}
-
-.grid-row {
-  position: relative;
-  border-bottom: 1px solid #f3f4f6;
-
-  &:hover { background: #f3f6ff; }
-}
-
-.row-bg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  min-height: 100%;
   background-image: repeating-linear-gradient(
     to right,
     rgba(17, 24, 39, 0.06) 0,
     rgba(17, 24, 39, 0.06) 1px,
-    transparent 1px,
+    transparent 2px,
     transparent var(--colw, 84px)
   );
-  opacity: 0.18;
+  background-repeat: repeat;
+}
+
+.grid-row {
+  position: relative;
+  border-bottom: none;
+
+  &:hover { background: #f3f6ff; }
+}
+
+.add-date-anchor {
+  position: absolute;
+  top: 4px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.add-date-preview {
+  width: 113px;
+  height: 38px;
+  border-radius: 8px;
+  background: rgba(101, 112, 255, 0.1);
+  border: 1px solid rgba(195, 199, 255, 1);
+}
+
+.add-date-bubble {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #5f6787;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+}
+
+.add-date-bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: #5f6787;
+  rotate: 45deg;
+}
+
+.row-bg {
+  opacity: 0.4;
 }
 
 .today-line {
@@ -138,7 +181,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #eef2ff;
   border: 1px solid rgba(124, 92, 255, 0.18);
 
   .wo-name {
@@ -151,11 +193,13 @@
   }
 
   .wo-badge {
-    font-size: 11px;
+    font-size: 14px;
     padding: 4px 8px;
-    border-radius: 999px;
+    border-radius: 5px;
     line-height: 1;
+    font-family: "Circular-Std";
     white-space: nowrap;
+    font-weight: 400;
   }
 
   .wo-menu {
@@ -167,7 +211,21 @@
     border-radius: 8px;
     cursor: pointer;
 
-    &:hover { background: rgba(0,0,0,0.06); }
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &:hover .wo-menu,
+  &.menu-open .wo-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .menu-pop {
@@ -182,7 +240,7 @@
     z-index: 20;
 
     button {
-      width: 140px;
+      width: 100%;
       text-align: left;
       padding: 10px 12px;
       background: #fff;
@@ -190,12 +248,11 @@
       cursor: pointer;
 
       &:hover { background: #f6f7fb; }
-      &.danger { color: #b42318; }
+      &.danger { color: rgba(62, 64, 219, 1); }
     }
   }
 }
 
-/* status colors */
 .status-open {
   background: rgba(59, 130, 246, 0.12);
   color: #2563eb;
@@ -213,3 +270,20 @@
   color: #b45309;
 }
 
+.current-period-layer {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 0;
+  position: relative;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.current-period-spacer {
+  width: 280px;
+}
+
+.current-period-track {
+  position: relative;
+  width: 100%;
+}

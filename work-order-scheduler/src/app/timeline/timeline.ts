@@ -6,13 +6,14 @@ import { STATUS_OPTIONS, WorkOrderDocument, WorkOrderStatus } from '../models/wo
 import { addDays, fromIso, startOfDay, toIso, pad2, startOfWeek, startOfMonth } from '../timeline.utils';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
+import { CurrentDateTab } from '../current-date-tab/current-date-tab';
 
 type LaneOrder = WorkOrderDocument & { lane: number };
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [TimelineHeader, WorkOrderPanel, CommonModule],
+  imports: [TimelineHeader, WorkOrderPanel, CommonModule, CurrentDateTab],
   templateUrl: './timeline.html',
   styleUrl: './timeline.scss',
 })
@@ -20,10 +21,14 @@ export class Timeline implements OnInit {
   editingOrder = signal<WorkOrderDocument | null>(null);
   prefillStartIso = signal<string>('');
   prefillEndIso = signal<string>('');
+  hoverRowId = signal<string | null>(null);
+  hoverX = signal<number | null>(null);
+  headerScrollLeft = signal(0);
+  showAddBubble = signal(false);
   @ViewChild('gridScroll', { static: true }) gridScroll!: ElementRef<HTMLDivElement>;
   @ViewChild('gridHeaderScroll', { static: true }) gridHeaderScroll!: ElementRef<HTMLDivElement>;
   today = startOfDay(new Date());
-  timescale = signal<Timescale>('month');
+  timescale = signal<Timescale>('day');
   store = new TimelineStore();
   colWidth = computed(() => {
     switch (this.timescale()) {
@@ -110,16 +115,18 @@ export class Timeline implements OnInit {
 
 
   ngOnInit(): void {
-
+    
   }
 
-   onBodyScroll() {
+  onBodyScroll() {
     const left = this.gridScroll.nativeElement.scrollLeft;
     this.gridHeaderScroll.nativeElement.scrollLeft = left;
+    this.headerScrollLeft.set(left);
   }
   onHeaderScroll() {
     const left = this.gridHeaderScroll.nativeElement.scrollLeft;
     this.gridScroll.nativeElement.scrollLeft = left;
+    this.headerScrollLeft.set(left);
   }
 
   setTimescale(ts: Timescale) {
@@ -323,6 +330,29 @@ export class Timeline implements OnInit {
   laneCount(workCenterId: string): number {
     const items = this.ordersWithLanes(workCenterId);
     return items.length ? Math.max(...items.map(x => x.lane)) + 1 : 1;
+  }
+
+  
+  onTimelineMouseMove(event: MouseEvent, workCenterId: string) {
+    const target = event.target as HTMLElement;
+
+    if (target.closest('.wo-bar') || target.closest('.menu-pop')) {
+      this.showAddBubble.set(false);
+      return;
+    }
+
+    const gridRect = this.gridScroll.nativeElement.getBoundingClientRect();
+    const x = event.clientX - gridRect.left + this.gridScroll.nativeElement.scrollLeft;
+
+    this.hoverRowId.set(workCenterId);
+    this.hoverX.set(x);
+    this.showAddBubble.set(true);
+  }
+
+  onTimelineMouseLeave() {
+    this.showAddBubble.set(false);
+    this.hoverRowId.set(null);
+    this.hoverX.set(null);
   }
 
 }

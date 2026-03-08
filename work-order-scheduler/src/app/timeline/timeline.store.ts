@@ -36,6 +36,11 @@ export class TimelineStore {
     this.setOrders(this._orders().filter(o => o.docId !== docId));
   }
 
+  resetToSampleData() {
+    this._orders.set(WORK_ORDERS);
+    localStorage.removeItem(LS_KEY);
+  }
+
   overlaps(workCenterId: string, startIso: string, endIso: string, excludeId?: string): boolean {
     const start = startOfDay(toDate(startIso)).getTime();
     const end = startOfDay(toDate(endIso)).getTime();

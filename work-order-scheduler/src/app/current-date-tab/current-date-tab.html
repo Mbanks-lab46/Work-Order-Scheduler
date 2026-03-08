@@ -1,0 +1,7 @@
+<div class="time-header-wrap">
+    @if (currentPeriodX() !== null) {
+        <div class="current-period-tab" [style.left.px]="currentPeriodX()!">
+            {{ currentPeriodLabel() }}
+        </div>
+    }
+</div>
