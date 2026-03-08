@@ -3,20 +3,20 @@
       <div class="title">Work Orders</div>
 
       <div class="timescale-container">
-        <div class="timescale">
-            <span class="label">Timescale</span>
-      </div>
-      <div class="select-wrap">
-            <select class="select" [value]="timescale()" (change)="onChangeTimescale($event)">
-            <option value="day">Day</option>
-            <option value="week">Week</option>
-            <option value="month">Month</option>
-            </select>
+            <div class="timescale">
+                <span class="label">Timescale</span>
+            </div>
+            <div class="select-wrap">
+                <select class="select" [value]="timescale()" (change)="onChangeTimescale($event)">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                </select>
 
-            <span class="caret">
-                <img src="assets/images/Down.png" />
-            </span>
-      </div>
+                <span class="caret">
+                    <img src="assets/images/Down.png" />
+                </span>
+            </div>
       </div>
       
     </div>

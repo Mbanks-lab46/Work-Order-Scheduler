@@ -60,17 +60,33 @@
   font-family: "Circular-Std";
   font-size: 13px;
   font-weight: 500;
-  color: rgba(62, 64, 219, 1);
+  color: #5b61ff;
   line-height: 1;
   cursor: pointer;
-  padding-right: 8px;
+  padding-right: 18px;
 }
 
-.caret{
-  padding-right: 4px;
+select option {
+  color: #20264a;
 }
 
-select::after {
-  content: '';
-  color: black;
+select option:checked {
+  color: #5b61ff;
+}
+
+.caret {
+  position: absolute;
+  right: 4px;
+  top: 60%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.caret img {
+  display: block;
 }

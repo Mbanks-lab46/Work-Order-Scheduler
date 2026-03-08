@@ -21,7 +21,6 @@ export function addDays(d: Date, n: number): Date {
   return x;
 }
 
-/** Monday start (Mon = 0) */
 export function startOfWeek(d: Date): Date {
   const x = startOfDay(d);
   const day = (x.getDay() + 6) % 7;

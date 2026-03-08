@@ -11,7 +11,7 @@ export type Timescale = 'day' | 'week' | 'month';
   styleUrl: './timeline-header.scss',
 })
 export class TimelineHeader {
-  timescale = input<Timescale>('month');
+  timescale = input<Timescale>('day');
   timescaleChange = output<Timescale>();
 
   onChangeTimescale(event: Event) {
